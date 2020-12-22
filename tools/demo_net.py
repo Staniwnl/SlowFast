@@ -14,6 +14,7 @@ from slowfast.visualization.ava_demo_precomputed_boxes import (
 from slowfast.visualization.demo_loader import ThreadVideoManager, VideoManager
 from slowfast.visualization.predictor import ActionPredictor
 from slowfast.visualization.video_visualizer import VideoVisualizer
+#from slowfast.utils.ava_evaluation import standard_fields
 
 logger = logging.get_logger(__name__)
 
@@ -91,6 +92,15 @@ def run_demo(cfg, frame_provider):
             yield task
         except IndexError:
             continue
+    """
+    # YHX
+    cor = standard_fields.InputDataFields.proposal_boxes
+    score = standard_fields.InputDataFields.proposal_objectness
+    f = open('bounding.txt', 'a')
+    f.write(str(cor))
+    f.write(str(score))
+    f.close()
+    """
 
 
 def demo(cfg):
