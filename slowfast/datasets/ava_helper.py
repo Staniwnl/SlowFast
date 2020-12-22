@@ -8,9 +8,9 @@ from iopath.common.file_io import g_pathmgr
 
 logger = logging.getLogger(__name__)
 
-FPS = 30
-AVA_VALID_FRAMES = range(902, 1799)
-
+FPS = 25
+# AVA_VALID_FRAMES = range(902, 1799)
+AVA_VALID_FRAMES = range(3, 1938)
 
 def load_image_lists(cfg, is_train):
     """
@@ -36,14 +36,14 @@ def load_image_lists(cfg, is_train):
     video_name_to_idx = {}
     video_idx_to_name = []
     for list_filename in list_filenames:
-        with g_pathmgr.open(list_filename, "r") as f:
+        with g_pathmgr.open(list_filename, "r", encoding="utf-8-sig") as f:
             f.readline()
             for line in f:
                 row = line.split()
                 # The format of each row should follow:
                 # original_vido_id video_id frame_id path labels.
                 assert len(row) == 5
-                video_name = row[0]
+                video_name = row[0].lstrip('"')
 
                 if video_name not in video_name_to_idx:
                     idx = len(video_name_to_idx)
@@ -133,7 +133,7 @@ def get_keyframe_data(boxes_and_labels):
         0: 900
         30: 901
         """
-        return (sec - 900) * FPS
+        return (sec - 0) * FPS
 
     keyframe_indices = []
     keyframe_boxes_and_labels = []
@@ -194,7 +194,7 @@ def parse_bboxes_file(
     count = 0
     unique_box_count = 0
     for filename, is_gt_box in zip(ann_filenames, ann_is_gt_box):
-        with g_pathmgr.open(filename, "r") as f:
+        with g_pathmgr.open(filename, "r", encoding="utf-8-sig") as f:
             for line in f:
                 row = line.strip().split(",")
                 # When we use predicted boxes to train/eval, we need to

@@ -63,6 +63,15 @@ class Ava(torch.utils.data.Dataset):
         boxes_and_labels = ava_helper.load_boxes_and_labels(
             cfg, mode=self._split
         )
+        # del boxes_and_labels["\ufeff053oq2xB3oU"]
+        print(len(boxes_and_labels))
+        print(len(self._image_paths))
+        # f = open('data/ava/log.txt', 'w')
+        # f.write(str(boxes_and_labels))
+        # f.write(str(self._video_idx_to_name))
+        # print(boxes_and_labels)
+        # f.close()
+
 
         assert len(boxes_and_labels) == len(self._image_paths)
 
@@ -370,6 +379,7 @@ class Ava(torch.utils.data.Dataset):
             boxes.append(box_labels[0])
             labels.append(box_labels[1])
         boxes = np.array(boxes)
+
         # Score is not used.
         boxes = boxes[:, :4].copy()
         ori_boxes = boxes.copy()
@@ -401,7 +411,7 @@ class Ava(torch.utils.data.Dataset):
             for label in box_labels:
                 if label == -1:
                     continue
-                assert label >= 1 and label <= 80
+                assert label >= 0 and label <= 6
                 label_arrs[i][label - 1] = 1
 
         imgs = utils.pack_pathway_output(self.cfg, imgs)
