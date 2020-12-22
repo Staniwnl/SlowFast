@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 
+import json
 import queue
 import cv2
 import torch
@@ -16,7 +17,7 @@ from slowfast.visualization.utils import process_cv2_inputs
 
 logger = logging.get_logger(__name__)
 
-
+a=[]
 class Predictor:
     """
     Action Predictor for action recognition.
@@ -203,5 +204,20 @@ class Detectron2Predictor:
         mask = outputs["instances"].pred_classes == 0
         pred_boxes = outputs["instances"].pred_boxes.tensor[mask]
         task.add_bboxes(pred_boxes)
+    
+        # YHX
+        person_detection = outputs["instances"][outputs["instances"].pred_classes == 0]
+        score = person_detection.scores.cpu().numpy().tolist()
+        box =pred_boxes.cpu().numpy().tolist()
+        out={}
+        out["bbox"]=box
+        out["scores"]=score
+        #out_str=json.dumps(out)
+        f = open('bounding.json', 'a')
+        json.dump(out,f)
+        f.write('\n')
+        f.close()
+    
+
 
         return task
