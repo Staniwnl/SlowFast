@@ -699,7 +699,7 @@ _C.DEMO.DETECTRON2_CFG = "COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"
 # Path to Detectron2 object detection model pre-trained weights.
 _C.DEMO.DETECTRON2_WEIGHTS = "detectron2://COCO-Detection/faster_rcnn_R_50_FPN_3x/137849458/model_final_280758.pkl"
 # Threshold for choosing predicted bounding boxes by Detectron2.
-_C.DEMO.DETECTRON2_THRESH = 0.9
+_C.DEMO.DETECTRON2_THRESH = 0.4
 # Number of overlapping frames between 2 consecutive clips.
 # Increase this number for more frequent action predictions.
 # The number of overlapping frames cannot be larger than
@@ -710,11 +710,11 @@ _C.DEMO.BUFFER_SIZE = 0
 _C.DEMO.OUTPUT_FILE = ""
 # Frames per second rate for writing to output video file.
 # If not set (-1), use fps rate from input file.
-_C.DEMO.OUTPUT_FPS = -1
+_C.DEMO.OUTPUT_FPS = 25
 # Input format from demo video reader ("RGB" or "BGR").
 _C.DEMO.INPUT_FORMAT = "BGR"
 # Draw visualization frames in [keyframe_idx - CLIP_VIS_SIZE, keyframe_idx + CLIP_VIS_SIZE] inclusively.
-_C.DEMO.CLIP_VIS_SIZE = 10
+_C.DEMO.CLIP_VIS_SIZE = 15
 # Number of processes to run video visualizer.
 _C.DEMO.NUM_VIS_INSTANCES = 2
 
@@ -726,21 +726,21 @@ _C.DEMO.THREAD_ENABLE = False
 # This is used for fast demo speed by reducing the prediction/visualiztion frequency.
 # If -1, take the most recent read clip for visualization. This mode is only supported
 # if `DEMO.THREAD_ENABLE` is set to True.
-_C.DEMO.NUM_CLIPS_SKIP = 0
+_C.DEMO.NUM_CLIPS_SKIP = -1
 # Path to ground-truth boxes and labels (optional)
 _C.DEMO.GT_BOXES = ""
 # The starting second of the video w.r.t bounding boxes file.
 _C.DEMO.STARTING_SECOND = 900
 # Frames per second of the input video/folder of images.
-_C.DEMO.FPS = 30
+_C.DEMO.FPS = 25
 # Visualize with top-k predictions or predictions above certain threshold(s).
 # Option: {"thres", "top-k"}
-_C.DEMO.VIS_MODE = "thres"
+_C.DEMO.VIS_MODE = "top-k"
 # Threshold for common class names.
-_C.DEMO.COMMON_CLASS_THRES = 0.7
+_C.DEMO.COMMON_CLASS_THRES = 0.8
 # Theshold for uncommon class names. This will not be
 # used if `_C.DEMO.COMMON_CLASS_NAMES` is empty.
-_C.DEMO.UNCOMMON_CLASS_THRES = 0.3
+_C.DEMO.UNCOMMON_CLASS_THRES = 0.9
 # This is chosen based on distribution of examples in
 # each classes in AVA dataset.
 _C.DEMO.COMMON_CLASS_NAMES = [
@@ -787,7 +787,6 @@ def _assert_and_infer_cfg(cfg):
     # General assertions.
     assert cfg.SHARD_ID < cfg.NUM_SHARDS
     return cfg
-
 
 def get_cfg():
     """
