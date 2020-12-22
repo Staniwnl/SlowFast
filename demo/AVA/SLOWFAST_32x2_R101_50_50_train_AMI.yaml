@@ -1,31 +1,43 @@
 TRAIN:
-  ENABLE: False
+  ENABLE: True
   DATASET: ava
-  BATCH_SIZE: 8
+  BATCH_SIZE: 1
   EVAL_PERIOD: 1
   CHECKPOINT_PERIOD: 1
-  AUTO_RESUME: True
-  CHECKPOINT_FILE_PATH: "./demo/AVA/SLOWFAST_32x2_R101_50_50.pkl"  #path to pretrain model
+  AUTO_RESUME: False
+  CHECKPOINT_FILE_PATH: ""  #path to pretrain model
   CHECKPOINT_TYPE: caffe2
 DATA:
   NUM_FRAMES: 32
   SAMPLING_RATE: 2
-  TRAIN_JITTER_SCALES: [288, 352]
-  TRAIN_CROP_SIZE: 288
-  TEST_CROP_SIZE: 288
+  TRAIN_JITTER_SCALES: [256, 320]
+  TRAIN_CROP_SIZE: 224
+  TEST_CROP_SIZE: 256
   INPUT_CHANNEL_NUM: [3, 3]
+  PATH_PREFIX: "/content/gdrive/My Drive/Colab Notebooks/SlowFast/slowfast/"
+  PATH_TO_DATA_DIR: "data/ava/"
+  PATH_LABEL_SEPARATOR: " "
 DETECTION:
   ENABLE: True
-  ALIGNED: False
+  ALIGNED: True
 AVA:
   BGR: False
-  DETECTION_SCORE_THRESH: 0.4
-  TEST_PREDICT_BOX_LISTS: ["person_box_67091280_iou90/ava_detection_val_boxes_and_labels.csv"]
+  DETECTION_SCORE_THRESH: 0.8
+  FRAME_DIR: "data/ava/frames/"
+  FRAME_LIST_DIR: "data/ava/frame_lists/"
+  ANNOTATION_DIR: "data/ava/frame_lists/"
+  TRAIN_PREDICT_BOX_LISTS: []
+  TEST_PREDICT_BOX_LISTS: ["val_groundtruth.csv"]
+  TRAIN_GT_BOX_LISTS: ["train_groundtruth.csv"]
+  LABEL_MAP_FILE: "label_map_file.pbtxt"
+  EXCLUSION_FILE: "ava_val_excluded_timestamps_v2.2.csv"
+  GROUNDTRUTH_FILE: "val_groundtruth.csv"
+  FULL_TEST_ON_VAL: True
 SLOWFAST:
   ALPHA: 4
   BETA_INV: 8
   FUSION_CONV_CHANNEL_RATIO: 2
-  FUSION_KERNEL_SZ: 5
+  FUSION_KERNEL_SZ: 7
 RESNET:
   ZERO_INIT_FINAL_BN: True
   WIDTH_PER_GROUP: 64
@@ -45,11 +57,18 @@ BN:
   USE_PRECISE_STATS: False
   NUM_BATCHES_PRECISE: 200
 SOLVER:
+  BASE_LR: 0.1
+  LR_POLICY: steps_with_relative_lrs
+  STEPS: [0, 10, 15, 20]
+  LRS: [1, 0.1, 0.01, 0.001]
+  MAX_EPOCH: 20
   MOMENTUM: 0.9
   WEIGHT_DECAY: 1e-7
+  WARMUP_EPOCHS: 5.0
+  WARMUP_START_LR: 0.000125
   OPTIMIZING_METHOD: sgd
 MODEL:
-  NUM_CLASSES: 80
+  NUM_CLASSES: 7
   ARCH: slowfast
   MODEL_NAME: SlowFast
   LOSS_FUNC: bce
@@ -60,9 +79,8 @@ TEST:
   DATASET: ava
   BATCH_SIZE: 8
 DATA_LOADER:
-  NUM_WORKERS: 2
+  NUM_WORKERS: 1
   PIN_MEMORY: True
-
 NUM_GPUS: 1
 NUM_SHARDS: 1
 RNG_SEED: 0
@@ -71,7 +89,7 @@ OUTPUT_DIR: "./output"
 #  MODEL_VIS:
 #    TOPK: 2
 DEMO:
-  ENABLE: True
+  ENABLE: False
   LABEL_FILE_PATH: "./demo/AVA/ava_classnames.json"
   INPUT_VIDEO: "./EN2001a.Corner_cut.avi"
   OUTPUT_FILE: "./EN2001a.Corner_cut_output.avi"
